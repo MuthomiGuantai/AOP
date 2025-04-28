@@ -15,9 +15,6 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     public Task createTask(Task task) {
-        if (task.getTitle() == null || task.getTitle().isEmpty()) {
-            throw new IllegalArgumentException("Task title cannot be empty");
-        }
         task.setStatus(task.getStatus() != null ? task.getStatus() : Task.TaskStatus.TODO);
         return taskRepository.save(task);
     }
