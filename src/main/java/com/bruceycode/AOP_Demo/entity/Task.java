@@ -1,6 +1,8 @@
 package com.bruceycode.AOP_Demo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,9 +15,11 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title cannot be empty")
     private String title;
     private String description;
 
+    @NotNull(message = "Status cannot be null")
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 

@@ -2,6 +2,7 @@ package com.bruceycode.AOP_Demo.controller;
 
 import com.bruceycode.AOP_Demo.entity.Task;
 import com.bruceycode.AOP_Demo.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
         Task createdTask = taskService.createTask(task);
         return ResponseEntity.ok(createdTask);
     }
@@ -34,7 +35,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @Valid @RequestBody Task taskDetails) {
         Task updatedTask = taskService.updateTask(id, taskDetails);
         return ResponseEntity.ok(updatedTask);
     }
