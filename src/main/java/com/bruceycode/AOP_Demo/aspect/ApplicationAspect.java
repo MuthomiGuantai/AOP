@@ -48,7 +48,7 @@ public class ApplicationAspect {
         }
     }
 
-    // Handle exceptions globally for controller methods
+
     @AfterThrowing(
             pointcut = "execution(* com.bruceycode.AOP_Demo.controller..*.*(..))",
             throwing = "ex"
