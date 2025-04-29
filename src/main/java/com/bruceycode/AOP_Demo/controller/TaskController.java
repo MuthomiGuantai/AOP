@@ -23,10 +23,11 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
-        List<Task> tasks = taskService.getAllTasks();
+    public ResponseEntity<List<Task>> getAllTasks(@RequestParam(required = false) Task.TaskStatus status) {
+        List<Task> tasks = status != null ? taskService.getTasksByStatus(status) : taskService.getAllTasks();
         return ResponseEntity.ok(tasks);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {

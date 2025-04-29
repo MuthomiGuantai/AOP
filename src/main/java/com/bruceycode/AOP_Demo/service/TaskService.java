@@ -1,7 +1,9 @@
 package com.bruceycode.AOP_Demo.service;
 
 import com.bruceycode.AOP_Demo.entity.Task;
+import com.bruceycode.AOP_Demo.entity.User;
 import com.bruceycode.AOP_Demo.repository.TaskRepository;
+import com.bruceycode.AOP_Demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +15,14 @@ import java.util.NoSuchElementException;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
     public Task createTask(Task task) {
+        if (task.getAssignee() != null && task.getAssignee().getId() != null) {
+            User assignee = userRepository.findById(task.getAssignee().getId())
+                    .orElseThrow(() -> new NoSuchElementException("Assignee not found with id: " + task.getAssignee().getId()));
+            task.setAssignee(assignee);
+        }
         task.setStatus(task.getStatus() != null ? task.getStatus() : Task.TaskStatus.TODO);
         return taskRepository.save(task);
     }
@@ -41,5 +49,11 @@ public class TaskService {
             throw new NoSuchElementException("Task not found with id: " + id);
         }
         taskRepository.deleteById(id);
+    }
+
+    public List<Task> getTasksByStatus(Task.TaskStatus status) {
+        return taskRepository.findAll().stream()
+                .filter(task -> task.getStatus() == status)
+                .toList();
     }
 }

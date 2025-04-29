@@ -27,6 +27,9 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
+    @ManyToOne
+    private User assignee;
+
     public enum TaskStatus  {
         TODO, IN_PROGRESS, DONE
     }

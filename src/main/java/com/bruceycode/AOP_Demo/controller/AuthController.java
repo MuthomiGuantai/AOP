@@ -1,5 +1,7 @@
 package com.bruceycode.AOP_Demo.controller;
 
+import com.bruceycode.AOP_Demo.entity.User;
+import com.bruceycode.AOP_Demo.repository.UserRepository;
 import com.bruceycode.AOP_Demo.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,18 +16,31 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        // In a real app, validate credentials against a user database
-        if ("user".equals(request.getUsername()) && "password".equals(request.getPassword())) {
-            String token = jwtUtil.generateToken(request.getUsername(), "USER");
-            return ResponseEntity.ok(token);
-        } else if ("admin".equals(request.getUsername()) && "admin".equals(request.getPassword())) {
-            String token = jwtUtil.generateToken(request.getUsername(), "ADMIN");
-            return ResponseEntity.ok(token);
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new IllegalArgumentException("Invalid username or password");
         }
-        return ResponseEntity.status(401).body("Invalid credentials");
+        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+        return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword()); // In production, hash the password
+        user.setRole(request.getRole());
+        userRepository.save(user);
+        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+        return ResponseEntity.ok(token);
     }
 
     static class LoginRequest {
@@ -46,6 +61,36 @@ public class AuthController {
 
         public void setPassword(String password) {
             this.password = password;
+        }
+    }
+
+    static class RegisterRequest {
+        private String username;
+        private String password;
+        private String role;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
         }
     }
 }
