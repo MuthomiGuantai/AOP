@@ -1,6 +1,7 @@
 package com.bruceycode.AOP_Demo.aspect;
 
 import com.bruceycode.AOP_Demo.util.JwtUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Api for user authentication")
 public class AuthAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthAspect.class);
