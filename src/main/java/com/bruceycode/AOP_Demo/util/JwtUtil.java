@@ -13,7 +13,7 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "task-management-secret-key";
+    private final String SECRET_KEY = "task-management-secret-key-2345678901234567890123456789012";
     private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
 
     public String generateToken(String username, String role) {
